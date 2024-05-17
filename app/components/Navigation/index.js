@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FaSpotify } from "react-icons/fa";
 import { isAuthenticated } from "@/utils/isAuthenticated";
 
-const Navigation = async ({ mood }) => {
+const Navigation = async () => {
   const session = await isAuthenticated();
   return (
     <div

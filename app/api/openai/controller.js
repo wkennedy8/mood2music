@@ -1,4 +1,3 @@
-import { isAuthenticated } from "@/utils/isAuthenticated";
 const OpenAI = require("openai");
 
 const openai = new OpenAI({
@@ -6,7 +5,6 @@ const openai = new OpenAI({
 });
 
 export async function main(mood) {
-  const session = await isAuthenticated();
   const completion = await openai.chat.completions.create({
     messages: [
       {
