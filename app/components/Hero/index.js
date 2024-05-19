@@ -4,6 +4,7 @@ import { isAuthenticated } from "@/utils/isAuthenticated";
 
 const Hero = async () => {
   const session = await isAuthenticated();
+
   return (
     <div className="hero min-h-[60vh]">
       <div className="hero-content text-center">

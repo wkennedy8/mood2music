@@ -22,27 +22,6 @@ export async function main(mood) {
   return { title, artist };
 }
 
-export const fetchToken = async () => {
-  try {
-    const auth = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Accept: "application/json",
-      },
-      body: `grant_type=client_credentials&client_id=${process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID}&client_secret=${process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET}`,
-    };
-    const res = await fetch("https://accounts.spotify.com/api/token", auth);
-    const data = await res.json();
-    console.log(data);
-    const token = data.access_token;
-
-    return token;
-  } catch (error) {
-    console.log(`Error Fetching Spotify Token ${error}`);
-  }
-};
-
 export const searchTracks = async (token, songObj) => {
   try {
     var parameters = {
@@ -81,24 +60,33 @@ export const searchTracks = async (token, songObj) => {
   }
 };
 
-export const refreshToken = async (token) => {
+export const refreshToken = async (refreshToken) => {
   try {
+    const basicAuth = new Buffer.from(
+      `${process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID}:${process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET}`
+    ).toString("base64");
     const auth = {
       method: "POST",
       headers: {
+        Authorization: `Basic ${basicAuth}`,
         "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Bearer ${token}`,
       },
-      form: {
+
+      body: new URLSearchParams({
         grant_type: "refresh_token",
-        refresh_token: token,
-      },
-      json: true,
+        refresh_token: refreshToken,
+        client_id: process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID,
+        client_secret: process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET,
+      }),
     };
     const res = await fetch("https://accounts.spotify.com/api/token", auth);
+    if (!res.ok) {
+      throw new Error(`Error: ${res.status} ${res.statusText}`);
+    }
     const data = await res.json();
-    const refresh_token = data.access_token;
-    return refresh_token;
+    console.log(data);
+
+    return data;
   } catch (error) {
     console.log(`Error Refreshing Token ${error}`);
   }
