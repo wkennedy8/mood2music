@@ -1,6 +1,8 @@
 "use client";
-import Track from "@/app/components/Track";
+
 import { useState, useEffect } from "react";
+import PlaylistModal from "@/app/components/PlaylistModal";
+import Track from "@/app/components/Track";
 
 const Song = ({ params }) => {
   const [track, setTrack] = useState({});
@@ -22,7 +24,12 @@ const Song = ({ params }) => {
 
   return (
     <div>
-      <Track track={track} />
+      {track && (
+        <>
+          <Track track={track} />
+          <PlaylistModal track={track} />
+        </>
+      )}
     </div>
   );
 };

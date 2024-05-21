@@ -1,5 +1,6 @@
 import { moods } from "@/utils/data";
 import Link from "next/link";
+
 const Main = () => {
   return (
     <div className="hero min-h-screen">

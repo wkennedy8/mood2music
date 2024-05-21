@@ -1,8 +1,8 @@
 import SpotifyProvider from "next-auth/providers/spotify";
-import { refreshToken } from "../../openai/controller";
+import { fetchUserPlaylists, getCurrentUser } from "../../openai/controller";
 
 const scope =
-  "user-read-recently-played user-read-playback-state user-top-read user-modify-playback-state user-read-currently-playing user-follow-read playlist-read-private user-read-email user-read-private user-library-read playlist-read-collaborative";
+  "playlist-modify-public playlist-modify-private user-read-recently-played user-read-playback-state user-top-read user-modify-playback-state user-read-currently-playing user-follow-read playlist-read-private user-read-email user-read-private user-library-read playlist-read-collaborative";
 
 export const options = {
   providers: [
@@ -25,6 +25,10 @@ export const options = {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
       }
+      // const user = await getCurrentUser(token.accessToken);
+      // const playlists = await fetchUserPlaylists(token.accessToken);
+      // token.user = user;
+      // token.playlists = playlists;
       // if (token.expires_at * 1000 > Date.now()) {
       //   const newToken = await refreshToken(token.refreshToken);
       //   token.accessToken = newToken.access_token;
@@ -35,9 +39,11 @@ export const options = {
       return token;
     },
     async session({ session, token }) {
-      console.log("SESSION:");
-      console.log(session);
       session.user = token;
+      const spotifyUser = await getCurrentUser(token.accessToken);
+      const playlists = await fetchUserPlaylists(token.accessToken);
+      session.spotifyUser = spotifyUser;
+      session.playlists = playlists;
       return session;
     },
   },

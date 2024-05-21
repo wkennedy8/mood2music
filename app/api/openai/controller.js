@@ -1,7 +1,8 @@
 const OpenAI = require("openai");
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_KEY,
+  apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true,
 });
 
 export async function main(mood) {
@@ -89,5 +90,67 @@ export const refreshToken = async (refreshToken) => {
     return data;
   } catch (error) {
     console.log(`Error Refreshing Token ${error}`);
+  }
+};
+
+export const getCurrentUser = async (token) => {
+  try {
+    var parameters = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const response = await fetch(`https://api.spotify.com/v1/me`, parameters);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(`Error getting current user: ${error}`);
+  }
+};
+
+export const fetchUserPlaylists = async (token) => {
+  try {
+    var parameters = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const response = await fetch(
+      `https://api.spotify.com/v1/me/playlists`,
+      parameters
+    );
+    const data = await response.json();
+    return data.items;
+  } catch (error) {
+    console.log(`Error fetching user playlists ${error}`);
+  }
+};
+
+export const addToPlaylist = async (token, playlistId, trackUri) => {
+  try {
+    var parameters = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        uris: [trackUri],
+      }),
+    };
+    const response = await fetch(
+      `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+      parameters
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(`Error posting to spotify playlist endpoint: ${error}`);
   }
 };
