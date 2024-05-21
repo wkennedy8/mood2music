@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import PlaylistModal from "@/app/components/PlaylistModal";
 import Track from "@/app/components/Track";
@@ -26,7 +25,7 @@ const Song = ({ params }) => {
     <div>
       {track && (
         <>
-          <Track track={track} />
+          <Track track={track} mood={mood} setTrack={setTrack} />
           <PlaylistModal track={track} />
         </>
       )}

@@ -23,6 +23,31 @@ export async function main(mood) {
   return { title, artist };
 }
 
+export const requestNewSong = async (currentSong, mood) => {
+  try {
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a professional DJ. I will provide a specific mood, and the previous song I was listening to. You will ONLY respond with a song title and artist that is reflective of that mood and is not the same as the previous song I was listening to. For example: Jesus Walks - Kanye West. No other words will be used.",
+        },
+        {
+          role: "user",
+          content: `My current mood is ${mood}, and the previous song I was listening to is ${currentSong}`,
+        },
+      ],
+      model: "gpt-4-turbo",
+    });
+
+    const title = completion.choices[0].message.content.split("-")[0].trim();
+    const artist = completion.choices[0].message.content.split("-")[1].trim();
+    return { title, artist };
+  } catch (error) {
+    console.log(`Error requesting new song: ${error}`);
+  }
+};
+
 export const searchTracks = async (token, songObj) => {
   try {
     var parameters = {

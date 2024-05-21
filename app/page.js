@@ -5,6 +5,7 @@ import { isAuthenticated } from "@/utils/isAuthenticated";
 
 export default async function Home() {
   const session = await isAuthenticated();
+  console.log(session);
   return (
     <main>
       {/* <Navigation /> */}

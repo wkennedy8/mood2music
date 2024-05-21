@@ -48,7 +48,11 @@ const PlaylistModal = ({ track }) => {
           {!successMessage &&
             playlists?.map((playlist) => {
               return (
-                <Link href="" onClick={() => handleAddToPlaylist(playlist)}>
+                <Link
+                  href=""
+                  onClick={() => handleAddToPlaylist(playlist)}
+                  key={playlist.id}
+                >
                   <p className="text-white font-bold my-4" key={playlist.id}>
                     {playlist.name}
                   </p>

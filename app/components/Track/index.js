@@ -1,7 +1,30 @@
+"use client";
+
+import { requestNewSong, searchTracks } from "@/app/api/openai/controller";
 import { IoIosAdd } from "react-icons/io";
 import { LiaExchangeAltSolid } from "react-icons/lia";
+import { useSession } from "next-auth/react";
 
-const Track = ({ track, setModalOpen }) => {
+const Track = ({ track, mood, setTrack }) => {
+  const { data: session } = useSession();
+
+  const handleChange = async () => {
+    setTrack({});
+    try {
+      const currentSong = `${track.name} - ${track.artists[0].name}`;
+      const songObj = await requestNewSong(currentSong, mood);
+      const record = await searchTracks(session.user.accessToken, songObj);
+      console.log(record);
+      if (record) {
+        setTrack(record);
+      }
+      if (!record) {
+        setTrack({ name: "Sorry, something went wrong 😔", artists: [""] });
+      }
+    } catch (error) {
+      console.log(`Error ${error}`);
+    }
+  };
   return (
     <div className="hero min-h-screen">
       <div className="hero-content text-center">
@@ -32,7 +55,10 @@ const Track = ({ track, setModalOpen }) => {
                   className="tooltip tooltip-[#ffffff] hover:tooltip-open tooltip-left"
                   data-tip="Change song"
                 >
-                  <button className="mr-2 hover:bg-gray bg-white rounded-full btn text-lg text-black hover:text-white font-bold">
+                  <button
+                    onClick={handleChange}
+                    className="mr-2 hover:bg-gray bg-white rounded-full btn text-lg text-black hover:text-white font-bold"
+                  >
                     <LiaExchangeAltSolid />
                   </button>
                 </div>
